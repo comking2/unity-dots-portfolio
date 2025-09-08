@@ -119,58 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &499513028
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 4250590091730509882, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-  m_PrefabInstance: {fileID: 1006583379}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 499513030}
-  - component: {fileID: 499513029}
-  m_Layer: 0
-  m_Name: EnemySpawn
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &499513029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 599894578612573296, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-  m_PrefabInstance: {fileID: 1006583379}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 499513028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1da33e9e022774b4e81943abeded1e9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Prefab: {fileID: 3950549580025334444, guid: 17f0640b778617745a4b282f810785bb, type: 3}
-  SpawnRate: 10
-  mSpawnType: 0
-  Direction:
-    x: 0
-    y: 0
-    z: -1
-  Speed: 1
---- !u!4 &499513030
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-  m_PrefabInstance: {fileID: 1006583379}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 499513028}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 100}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &684018483
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,67 +228,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!1001 &1006583379
-PrefabInstance:
+--- !u!1 &1249867023
+GameObject:
   m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1249867025}
+  - component: {fileID: 1249867024}
+  m_Layer: 0
+  m_Name: EnemySpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1249867024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249867023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da33e9e022774b4e81943abeded1e9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 3950549580025334444, guid: 17f0640b778617745a4b282f810785bb, type: 3}
+  SpawnRate: 0.1
+  mSpawnType: 0
+  Direction:
+    x: 0
+    y: 0
+    z: -1
+  Speed: 1
+--- !u!4 &1249867025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249867023}
   serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 599894578612573296, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: SpawnRate
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4250590091730509882, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_Name
-      value: EnemySpawn
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4338699517839068885, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 486ec05e00336c143bb7a5aa470c3d14, type: 3}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.5, y: 0, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1963116778
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -426,13 +365,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: 3950549580025334444, guid: e0bb9d7a58641084085836f6ab63d328, type: 3}
-  SpawnRate: 0.1
+  SpawnRate: 0.03
   mSpawnType: 1
   Direction:
     x: 0
     y: 0
     z: 1
-  Speed: 10
+  Speed: 20
 --- !u!114 &1963116784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,5 +390,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 684018487}
-  - {fileID: 1006583379}
+  - {fileID: 1249867025}
   - {fileID: 1963116778}
