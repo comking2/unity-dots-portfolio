@@ -11,6 +11,7 @@ public struct Spawner : IComponentData
     public SpawnType mSpawnType;
     public float3 Direction;
     public float Speed;
+    public bool EnableSpawn;
 
 }
 
@@ -35,6 +36,7 @@ class SpawnerAuthoring : MonoBehaviour
 
     public float3 Direction;
     public float Speed;
+    public bool EnableSpawn = true;
 }
 
 class SpawnerBaker : Baker<SpawnerAuthoring>
@@ -54,7 +56,8 @@ class SpawnerBaker : Baker<SpawnerAuthoring>
             SpawnRate = authoring.SpawnRate,
             mSpawnType = authoring.mSpawnType,
             Direction = authoring.Direction,
-            Speed = authoring.Speed
+            Speed = authoring.Speed,
+            EnableSpawn = authoring.EnableSpawn,
         };
         AddComponent(entity, spawner);
         

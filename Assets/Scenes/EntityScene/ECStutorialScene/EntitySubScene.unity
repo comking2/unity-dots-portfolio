@@ -258,13 +258,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: 3950549580025334444, guid: 17f0640b778617745a4b282f810785bb, type: 3}
-  SpawnRate: 0.1
+  SpawnRate: 0.01
   mSpawnType: 0
   Direction:
     x: 0
     y: 0
     z: -1
   Speed: 1
+  EnableSpawn: 1
 --- !u!4 &1249867025
 Transform:
   m_ObjectHideFlags: 0
@@ -372,6 +373,7 @@ MonoBehaviour:
     y: 0
     z: 1
   Speed: 20
+  EnableSpawn: 1
 --- !u!114 &1963116784
 MonoBehaviour:
   m_ObjectHideFlags: 0
