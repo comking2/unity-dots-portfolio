@@ -33,14 +33,20 @@ public partial struct SpawnerSystem : ISystem
     private void OnUpdate(ref SystemState state)
     {
         var time = SystemAPI.Time.ElapsedTime - mTimeStart;
-        
-
+        EntityCommandBuffer ecb = default;
+        bool needECB = false;
         foreach (var (spawner, tf) in SystemAPI.Query<RefRW<Spawner>, RefRO<LocalTransform>>())
         {
+            if(!spawner.ValueRO.EnableSpawn)
+                continue;
             if (spawner.ValueRO.NextSpawnTime > time)
                 continue;
-            var ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
-            EntityCommandBuffer ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+            if (needECB == false)
+            {
+                var ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+                ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+                needECB = true;
+            }
 
             var newEntity = ecb.Instantiate(spawner.ValueRO.Prefab);
 
@@ -50,26 +56,15 @@ public partial struct SpawnerSystem : ISystem
                 case SpawnType.ENEMY: pos += NextPos(); break;
                 case SpawnType.FIRE:  break;
             }
-
-            // TODO: 컴포넌트 추가 방식 수정 필요 - 각종 component들은 spawner에 미리 세팅해두고 복사하는 방식으로
-            ecb.AddComponent(newEntity, new MoveableData
+            
+            ecb.SetComponent(newEntity, new MoveableData
             {
                 Direction = spawner.ValueRO.Direction,
                 mSpeed = spawner.ValueRO.Speed
             });
-            switch (spawner.ValueRO.mSpawnType)
-            {
-                case SpawnType.ENEMY:
-                    ecb.AddComponent<EnemyTag>(newEntity);
-                    ecb.AddComponent(newEntity, new Radius { Value = 0.5f });
-                    ecb.AddComponent(newEntity, new Health { Value = 1 });
-                    break;
-                case SpawnType.FIRE:
-                    ecb.AddComponent<BulletTag>(newEntity);
-                    ecb.AddComponent(newEntity, new Radius { Value = 0.1f });
-                    break;
-            }
-            var p = SystemAPI.GetComponent<LocalTransform>(spawner.ValueRO.Prefab);
+            
+            var prefabLT = SystemAPI.GetComponentLookup<LocalTransform>(isReadOnly: true);
+            var p = prefabLT[spawner.ValueRO.Prefab];
             ecb.SetComponent(newEntity, LocalTransform.FromPositionRotationScale(pos, p.Rotation, p.Scale));
 
             // 주기 드리프트 없이
