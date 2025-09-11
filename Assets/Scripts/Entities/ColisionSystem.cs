@@ -55,6 +55,11 @@ public partial struct CollisionSystem : ISystem
                                              .WithEntityAccess())
         {
             // 탄환 반지름
+            if(btf.ValueRO.Position.z > 100f)
+            {
+                ecb.DestroyEntity(bEnt);
+                continue;
+            }
             float br = 0.2f;
             if (radiusLookup.HasComponent(bEnt)) br = radiusLookup[bEnt].Value;
 
