@@ -1,6 +1,7 @@
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Burst;
+using Unity.Collections;
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
@@ -19,9 +20,25 @@ public partial struct ObjectMoveSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (moveinfo, tf) in SystemAPI.Query<RefRO<MoveableData>, RefRW<LocalTransform>>())
+        var moveJob = new MoveJob
         {
-                tf.ValueRW.Position += moveinfo.ValueRO.Direction * moveinfo.ValueRO.mSpeed * SystemAPI.Time.DeltaTime;
+            deltaTime = SystemAPI.Time.fixedDeltaTime,
+            //RadiusLookup = radiusLookup
+        };
+        var handle = moveJob.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
+    }
+    
+    [BurstCompile]
+    public partial struct MoveJob : IJobEntity
+    {
+        public float deltaTime;
+
+        // WithAll<EnemyTag> 필터는 쿼리에서 이미 적용됨
+        void Execute(Entity e,in MoveableData moveable_data, ref LocalTransform tf)
+        {
+            tf.Position+= moveable_data.Direction * moveable_data.mSpeed * deltaTime;
         }
     }
+
 }
