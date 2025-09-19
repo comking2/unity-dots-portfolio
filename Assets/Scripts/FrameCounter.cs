@@ -52,8 +52,8 @@ public class FrameCounter : MonoBehaviour
     void OnDisable()
     {
         if (!mInitialized) return;
-        mRuntimeQ.Dispose();
-        mTotalQ.Dispose();
+        //mRuntimeQ.Dispose();
+        //mTotalQ.Dispose();
         mInitialized = false;
     }
 
