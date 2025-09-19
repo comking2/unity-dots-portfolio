@@ -12,6 +12,7 @@ public struct Health : IComponentData { public int Value; }
 public struct DamageInfo : IComponentData { public int Value; }
 public struct HitInfo : IComponentData { public int Damage; } // 피격 표시(후처리용)
 
+public struct EnemySnap { public Entity E; public float3 Pos; public float Radius; }
 
 [BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
@@ -42,34 +43,23 @@ public partial struct CollisionSystem : ISystem
 
         int enemyCount = _enemiesQ.CalculateEntityCount();
         // 1) 적들 스냅샷 컨테이너 (TempJob로 잡에서 채움)
-        var enemyPositions = new NativeList<float3>(Allocator.TempJob);
-        var enemyEntities  = new NativeList<Entity>(Allocator.TempJob);
-        var enemyRadii     = new NativeList<float>(Allocator.TempJob);
-
-        enemyPositions.Capacity = math.max(enemyPositions.Capacity, enemyCount);
-        enemyEntities.Capacity  = math.max(enemyEntities.Capacity,  enemyCount);
-        enemyRadii.Capacity     = math.max(enemyRadii.Capacity,     enemyCount);
-
+        var enemySnaps = new NativeList<EnemySnap>(Allocator.TempJob);
+        enemySnaps.Capacity = math.max(enemySnaps.Capacity, enemyCount);
         // 1-1) 적 수집 잡 (병렬 추가: ParallelWriter + DeferredJobArray)
         var collectJob = new CollectEnemiesJob
         {
-            Positions    = enemyPositions.AsParallelWriter(),
-            Entities     = enemyEntities.AsParallelWriter(),
-            Radii        = enemyRadii.AsParallelWriter(),
+            EnemySnaps = enemySnaps.AsParallelWriter(),
             RadiusLookup = radiusLookup
         };
         var handle = collectJob.ScheduleParallel(_enemiesQ, state.Dependency);
-        state.Dependency.Complete();
 
         // 2) 총알 vs 적 충돌 잡
         //    적 리스트는 AsDeferredJobArray()로 길이를 런타임에 결정 가능 (수집 잡 완료 전에도 스케줄 OK)
         var bulletJob = new BulletVsEnemiesJob
         {
-            EnemyPositions = enemyPositions.AsDeferredJobArray(),
-            EnemyEntities  = enemyEntities.AsDeferredJobArray(),
-            EnemyRadii     = enemyRadii.AsDeferredJobArray(),
-            RadiusLookup   = radiusLookup,
-            Ecb            = ecbParallel,
+            EnemySnaps = enemySnaps.AsDeferredJobArray(),
+            RadiusLookup = radiusLookup,
+            Ecb = ecbParallel,
             ZCull          = 100f,
             DefaultEnemyR  = 0.5f,
             DefaultBulletR = 0.2f
@@ -77,30 +67,26 @@ public partial struct CollisionSystem : ISystem
         handle = bulletJob.ScheduleParallel(_bulletsQ, handle);
 
         // 3) 디스포즈
-        handle = enemyPositions.Dispose(handle);
-        handle = enemyEntities.Dispose(handle);
-        handle = enemyRadii.Dispose(handle);
+        handle = enemySnaps.Dispose(handle);
 
         state.Dependency = handle;
     }
     [BurstCompile]
     public partial struct CollectEnemiesJob : IJobEntity
     {
-        public NativeList<float3>.ParallelWriter Positions;
-        public NativeList<Entity>.ParallelWriter  Entities;
-        public NativeList<float>.ParallelWriter   Radii;
+        public NativeList<EnemySnap>.ParallelWriter EnemySnaps;
 
         [ReadOnly] public ComponentLookup<Radius> RadiusLookup;
 
         // WithAll<EnemyTag> 필터는 쿼리에서 이미 적용됨
         void Execute(Entity e, in LocalTransform tf)
         {
-            Positions.AddNoResize(tf.Position);
-            Entities.AddNoResize(e);
-
-            float r = 0.5f;
-            if (RadiusLookup.HasComponent(e)) r = RadiusLookup[e].Value;
-            Radii.AddNoResize(r);
+            EnemySnaps.AddNoResize(new EnemySnap
+            {
+                E = e,
+                Pos = tf.Position,
+                Radius = RadiusLookup.HasComponent(e) ? RadiusLookup[e].Value : 0.5f
+            });
         }
     }
 
@@ -108,10 +94,7 @@ public partial struct CollisionSystem : ISystem
     [BurstCompile]
     public partial struct BulletVsEnemiesJob : IJobEntity
     {
-        [ReadOnly] public NativeArray<float3> EnemyPositions;
-        [ReadOnly] public NativeArray<Entity>  EnemyEntities;
-        [ReadOnly] public NativeArray<float>   EnemyRadii;
-
+        [ReadOnly] public NativeArray<EnemySnap> EnemySnaps;
         [ReadOnly] public ComponentLookup<Radius> RadiusLookup;
 
         public EntityCommandBuffer.ParallelWriter Ecb;
@@ -137,17 +120,17 @@ public partial struct CollisionSystem : ISystem
             float3 bp = btf.Position;
 
             // 첫 피격만 처리 (여러 적 동시 피격 원하면 break 제거)
-            for (int i = 0; i < EnemyEntities.Length; i++)
+            for (int i = 0; i < EnemySnaps.Length; i++)
             {
-                float rr = br + math.max(0f, EnemyRadii[i]);
-                float3 d = EnemyPositions[i] - bp;
+                float rr = br + math.max(0f, EnemySnaps[i].Radius);
+                float3 d = EnemySnaps[i].Pos - bp;
                 if (math.lengthsq(d) <= rr * rr)
                 {
-                    if (EnemyPositions[i].x > 1.5f)
+                    if (EnemySnaps[i].Pos.x > 1.5f)
                     {
-                        UnityEngine.Debug.Log($"Hit Enemy {EnemyEntities[i]} at {EnemyPositions[i]}");
+                        UnityEngine.Debug.Log($"Hit Enemy {EnemySnaps[i].E} at {EnemySnaps[i].Pos}");
                     }
-                    Ecb.AddComponent<HitInfo>(sortKey, EnemyEntities[i], new HitInfo() { Damage = bdi.Value });
+                    Ecb.AddComponent<HitInfo>(sortKey, EnemySnaps[i].E, new HitInfo() { Damage = bdi.Value });
                     Ecb.DestroyEntity(sortKey, bullet);
                     break;
                 }
