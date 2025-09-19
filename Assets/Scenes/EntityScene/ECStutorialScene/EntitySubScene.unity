@@ -265,7 +265,7 @@ MonoBehaviour:
     y: 0
     z: -1
   Speed: 1
-  EnableSpawn: 1
+  EnableSpawn: 0
 --- !u!4 &1249867025
 Transform:
   m_ObjectHideFlags: 0
