@@ -51,7 +51,7 @@ public partial struct SpawnerSystem : ISystem
             var newEntity = ecb.Instantiate(spawner.ValueRO.Prefab);
 
             float3 pos = tf.ValueRO.Position;
-            switch (spawner.ValueRO.mSpawnType)
+            switch (spawner.ValueRO.SpawnType)
             {
                 case SpawnType.ENEMY: pos += NextPos(); break;
                 case SpawnType.FIRE:  break;

@@ -8,7 +8,7 @@ public struct Spawner : IComponentData
     public float3 SpawnPosition;
     public float NextSpawnTime;
     public float SpawnRate;
-    public SpawnType mSpawnType;
+    public SpawnType SpawnType;
     public float3 Direction;
     public float Speed;
     public bool EnableSpawn;
@@ -54,7 +54,7 @@ class SpawnerBaker : Baker<SpawnerAuthoring>
             SpawnPosition = authoring.transform.position,
             NextSpawnTime = 0.0f,
             SpawnRate = authoring.SpawnRate,
-            mSpawnType = authoring.mSpawnType,
+            SpawnType = authoring.mSpawnType,
             Direction = authoring.Direction,
             Speed = authoring.Speed,
             EnableSpawn = authoring.EnableSpawn,
