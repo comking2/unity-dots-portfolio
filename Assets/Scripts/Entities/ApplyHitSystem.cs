@@ -18,10 +18,6 @@ public partial struct ApplyHitSystem : ISystem
                                          .WithAll<HitInfo>()
                                          .WithEntityAccess())
         {
-            if (ltf.ValueRO.Position.x > 1.5f)
-            {
-                UnityEngine.Debug.Log($"Apply Hit to Entity {e} at {ltf.ValueRO.Position}, Damage {hit.ValueRO.Damage}, HP {hp.ValueRO.Value} -> {hp.ValueRO.Value - hit.ValueRO.Damage}");
-            }
             hp.ValueRW.Value -= hit.ValueRO.Damage;
             ecb.RemoveComponent<HitInfo>(e);
             if (hp.ValueRO.Value <= 0)

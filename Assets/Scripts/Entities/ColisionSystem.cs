@@ -124,12 +124,9 @@ public partial struct CollisionSystem : ISystem
             {
                 float rr = br + math.max(0f, EnemySnaps[i].Radius);
                 float3 d = EnemySnaps[i].Pos - bp;
+                d.y = 0; // 수평 거리만 체크
                 if (math.lengthsq(d) <= rr * rr)
                 {
-                    if (EnemySnaps[i].Pos.x > 1.5f)
-                    {
-                        UnityEngine.Debug.Log($"Hit Enemy {EnemySnaps[i].E} at {EnemySnaps[i].Pos}");
-                    }
                     Ecb.AddComponent<HitInfo>(sortKey, EnemySnaps[i].E, new HitInfo() { Damage = bdi.Value });
                     Ecb.DestroyEntity(sortKey, bullet);
                     break;
