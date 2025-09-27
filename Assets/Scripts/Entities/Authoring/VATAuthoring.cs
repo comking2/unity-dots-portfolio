@@ -1,5 +1,6 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -29,16 +30,18 @@ public sealed class VATAuthoring : MonoBehaviour
             var meshRenderer = authoring.GetComponent<MeshRenderer>();
             var meshFilter = authoring.GetComponent<MeshFilter>();
 
-            var material = authoring.Material != null ? authoring.Material : meshRenderer.sharedMaterial;
-            
-            if (authoring.Material != null && meshRenderer.sharedMaterial != authoring.Material)
-            {
-                meshRenderer.sharedMaterial = authoring.Material;
-            }
-
-            if (meshFilter.sharedMesh != authoring.Clip.Mesh)
+            if (authoring.Clip != null && meshFilter.sharedMesh != authoring.Clip.Mesh)
             {
                 meshFilter.sharedMesh = authoring.Clip.Mesh;
+            }
+
+            if (authoring.Material != null)
+            {
+                DependsOn(authoring.Material);
+                if (meshRenderer.sharedMaterial != authoring.Material)
+                {
+                    meshRenderer.sharedMaterial = authoring.Material;
+                }
             }
 
             int frameCount = math.max(1, authoring.Clip.FrameCount);
@@ -79,27 +82,8 @@ public sealed class VATAuthoring : MonoBehaviour
             AddComponent(entity, new VATFrameRateProperty { Value = frameRate });
             AddComponent(entity, new VATVertsPerRowProperty { Value = authoring.Clip.VertsPerRow });
             AddComponent(entity, new VATSliceHeightProperty { Value = authoring.Clip.SliceHeight });
-
-            if (authoring.IsShaderTimeOverrideEnabled)
-            {
-                AddComponent(entity, new EntitiesUnitShaderTimeController
-                {
-                    CurrentTime = authoring.ShaderTimeOverrideStartTime,
-                    Speed = authoring.ShaderTimeOverrideSpeed,
-                    UseOverride = 1,
-                    Paused = (byte)(authoring.ShouldPlayOverrideOnStart ? 0 : 1)
-                });
-
-                AddComponent(entity, new EntitiesUnitShaderTimeProperty
-                {
-                    Value = authoring.ShaderTimeOverrideStartTime
-                });
-
-                AddComponent(entity, new EntitiesUnitShaderTimeEnabledProperty
-                {
-                    Value = 1f
-                });
-            }
+            AddComponent(entity, new VATTimeProperty { Value = 0f});
+            
         }
     }
 }
