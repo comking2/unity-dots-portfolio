@@ -119,6 +119,45 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &228580473 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
+  m_PrefabInstance: {fileID: 1963116778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &228580477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228580473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da33e9e022774b4e81943abeded1e9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 3950549580025334444, guid: 6dba82349caa2bb4a9314f92190e8d74, type: 3}
+  SpawnRate: 0.1
+  mSpawnType: 1
+  Direction:
+    x: 0
+    y: 0
+    z: 1
+  Speed: 3
+  EnableSpawn: 1
+--- !u!114 &228580478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228580473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d908c2c88f8162940b8cc34f48d8a60b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mSpeed: 1
 --- !u!1 &684018483
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,15 +296,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1da33e9e022774b4e81943abeded1e9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 3950549580025334444, guid: 17f0640b778617745a4b282f810785bb, type: 3}
+  Prefab: {fileID: 5446232756063933603, guid: b5d9628c57cf0b3419905543ea8e6e2b, type: 3}
   SpawnRate: 0.01
   mSpawnType: 0
   Direction:
     x: 0
     y: 0
     z: -1
-  Speed: 1
-  EnableSpawn: 0
+  Speed: 2
+  EnableSpawn: 1
 --- !u!4 &1249867025
 Transform:
   m_ObjectHideFlags: 0
@@ -275,7 +314,7 @@ Transform:
   m_GameObject: {fileID: 1249867023}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 100}
+  m_LocalPosition: {x: 0.5, y: -1, z: 100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -292,10 +331,6 @@ PrefabInstance:
     - target: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
       propertyPath: m_Name
       value: Capsule
-      objectReference: {fileID: 0}
-    - target: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7494935681605679698, guid: f90cfced15c17db49af4099e739508bb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -343,50 +378,11 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1963116780}
+      addedObject: {fileID: 228580477}
     - targetCorrespondingSourceObject: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1963116784}
+      addedObject: {fileID: 228580478}
   m_SourcePrefab: {fileID: 100100000, guid: f90cfced15c17db49af4099e739508bb, type: 3}
---- !u!1 &1963116779 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3950549580025334444, guid: f90cfced15c17db49af4099e739508bb, type: 3}
-  m_PrefabInstance: {fileID: 1963116778}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1963116780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1963116779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1da33e9e022774b4e81943abeded1e9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Prefab: {fileID: 3950549580025334444, guid: e0bb9d7a58641084085836f6ab63d328, type: 3}
-  SpawnRate: 0.03
-  mSpawnType: 1
-  Direction:
-    x: 0
-    y: 0
-    z: 1
-  Speed: 20
-  EnableSpawn: 1
---- !u!114 &1963116784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1963116779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d908c2c88f8162940b8cc34f48d8a60b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mSpeed: 5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
