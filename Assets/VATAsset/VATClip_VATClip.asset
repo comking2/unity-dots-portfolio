@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdb0a584052a6534daf970a1e352feb1, type: 3}
+  m_Name: VATClip_VATClip
+  m_EditorClassIdentifier: 
+  Mesh: {fileID: 4300000, guid: 737c2e0feee164b4faf0a16cbfe959cd, type: 2}
+  PositionTexture: {fileID: 18700000, guid: 1acc883c4deb52f4fa3c8044437f99e1, type: 2}
+  NormalTexture: {fileID: 18700000, guid: 60b27dd6528faba46bb3489a5954022c, type: 2}
+  FrameCount: 30
+  FrameRate: 30
+  VertexCount: 15937
+  VertsPerRow: 176
+  SliceHeight: 91
+  Duration: 1

@@ -54,7 +54,7 @@ public partial struct SpawnerSystem : ISystem
             switch (spawner.ValueRO.SpawnType)
             {
                 case SpawnType.ENEMY: pos += NextPos(); break;
-                case SpawnType.FIRE:  break;
+                case SpawnType.FIRE:  pos += new float3(0, 1.0f, 0.5f); break;//TODO: fire prefab 위치 강제 보정 - 테이블 값 적용할 수 있도록 수정해야함
             }
             
             ecb.SetComponent(newEntity, new MoveableData
