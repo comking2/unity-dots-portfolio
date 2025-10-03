@@ -50,17 +50,13 @@ Shader "Hidden/VAT/EntitiesLit_Array"
             #ifdef UNITY_DOTS_INSTANCING_ENABLED
                 UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
                     UNITY_DOTS_INSTANCED_PROP(float, _EntitiesTime)
-                    UNITY_DOTS_INSTANCED_PROP(float, _UseEntitiesTime)
-                    UNITY_DOTS_INSTANCED_PROP(float, _AnimSpeed)
                     UNITY_DOTS_INSTANCED_PROP(float, _AnimOffset)
                     UNITY_DOTS_INSTANCED_PROP(float, _AnimStartTime)
                 UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
                 #define ACCESS_PROP(name) UNITY_ACCESS_DOTS_INSTANCED_PROP(float, name)
             #else
                 UNITY_INSTANCING_BUFFER_START(PerInstance)
-                    UNITY_DEFINE_INSTANCED_PROP(float, _EntitiesTime)
-                    UNITY_DEFINE_INSTANCED_PROP(float, _UseEntitiesTime)
-                    UNITY_DEFINE_INSTANCED_PROP(float, _AnimSpeed)
+                    UNITY_DEFINE_INSTANCED_PROP(float, _EntitiesTime)                    
                     UNITY_DEFINE_INSTANCED_PROP(float, _AnimOffset)
                     UNITY_DEFINE_INSTANCED_PROP(float, _AnimStartTime)
                 UNITY_INSTANCING_BUFFER_END(PerInstance)
@@ -80,19 +76,15 @@ Shader "Hidden/VAT/EntitiesLit_Array"
                 const float H = max(_SliceHeight, 1.0);
 
                 float t0   = ACCESS_PROP(_AnimStartTime);
-                float spd  = ACCESS_PROP(_AnimSpeed);
                 float ofs  = ACCESS_PROP(_AnimOffset);
                 float et   = ACCESS_PROP(_EntitiesTime);
-                float useE = ACCESS_PROP(_UseEntitiesTime); // 0/1
-
-                spd = 1.0;
-
+                
                 // useE==1 → 엔티티 시간, 0 → 수동 시간
                 float baseTime = et;
 
                 // 수동 프레임 강제 사용 옵션
                 //bool  useManualFrame = false;
-                float frames = baseTime * _FPS * spd + ofs;
+                float frames = baseTime * _FPS + ofs;
 
                 uint   Fi = max((int)round(_Frames), 1);
                 uint   i0 = (uint)floor(frames);

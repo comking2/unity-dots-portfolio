@@ -34,11 +34,6 @@ public struct VATAnimManualTimeProperty : IComponentData
     public float Value;
 }
 
-[MaterialProperty("_AnimSpeed")]
-public struct VATAnimSpeedProperty : IComponentData
-{
-    public float Value;
-}
 
 [MaterialProperty("_AnimOffset")]
 public struct VATAnimOffsetProperty : IComponentData

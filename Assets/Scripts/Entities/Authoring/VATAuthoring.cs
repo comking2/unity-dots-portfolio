@@ -76,7 +76,6 @@ public sealed class VATAuthoring : MonoBehaviour
 
             AddComponent(entity, new VATAnimationState { Initialized = 0 });
             AddComponent(entity, new VATAnimStartTimeProperty { Value = 0f });
-            AddComponent(entity, new VATAnimSpeedProperty { Value = speed });
             AddComponent(entity, new VATAnimOffsetProperty { Value = offset });
             AddComponent(entity, new VATFrameCountProperty { Value = frameCount });
             AddComponent(entity, new VATFrameRateProperty { Value = frameRate });
