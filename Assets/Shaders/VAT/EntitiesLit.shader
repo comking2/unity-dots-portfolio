@@ -85,19 +85,19 @@ Shader "Hidden/VAT/EntitiesLit_Array"
                 float et   = ACCESS_PROP(_EntitiesTime);
                 float useE = ACCESS_PROP(_UseEntitiesTime); // 0/1
 
-                if (abs(spd) < 1e-6) spd = 1.0;
+                spd = 1.0;
 
                 // useE==1 → 엔티티 시간, 0 → 수동 시간
                 float baseTime = et;
 
                 // 수동 프레임 강제 사용 옵션
-                bool  useManualFrame = false;
-                float frames = useManualFrame ? _ManualFrame : (baseTime * _FPS * spd + ofs);
+                //bool  useManualFrame = false;
+                float frames = baseTime * _FPS * spd + ofs;
 
-                int   Fi = max((int)round(_Frames), 1);
-                int   i0 = (int)floor(frames);
-                int   s0 = i0 % Fi; if (s0 < 0) s0 += Fi;
-                int   s1 = s0 + 1;  if (s1 >= Fi) s1 -= Fi;
+                uint   Fi = max((int)round(_Frames), 1);
+                uint   i0 = (uint)floor(frames);
+                uint   s0 = i0 % Fi; if (s0 < 0) s0 += Fi;
+                uint   s1 = s0 + 1;  if (s1 >= Fi) s1 -= Fi;
                 float w  = frac(frames);
 
                 float row = floor(IN.vid / W);

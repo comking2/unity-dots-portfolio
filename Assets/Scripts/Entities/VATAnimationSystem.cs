@@ -14,17 +14,29 @@ public partial struct VATAnimationSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        float deltaTime = SystemAPI.Time.DeltaTime;
-        
-        foreach (var (animationState, settings, entityTimeProp, speedProp, offsetProp) in SystemAPI
-                     .Query<RefRW<VATAnimationState>, RefRO<VATAnimationSettings>, RefRW<VATTimeProperty>, RefRW<VATAnimSpeedProperty>, RefRW<VATAnimOffsetProperty>>())
+        var handle = new MoveJob
         {
-            
-            animationState.ValueRW.ManualTime += deltaTime * settings.ValueRO.Speed;
-
-            entityTimeProp.ValueRW.Value = animationState.ValueRO.ManualTime % (settings.ValueRO.FrameCount / settings.ValueRO.FrameRate);
-            speedProp.ValueRW.Value = settings.ValueRO.Speed;
-            offsetProp.ValueRW.Value = settings.ValueRO.Offset;
-        }
+            deltaTime = SystemAPI.Time.DeltaTime,
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency = handle;
     }
 }
+
+[BurstCompile]
+    public partial struct MoveJob : IJobEntity
+    {
+        public float deltaTime;
+
+        // WithAll<EnemyTag> 필터는 쿼리에서 이미 적용됨
+        void Execute(Entity e,ref VATAnimationState animation_state, in VATAnimationSettings settings,ref VATTimeProperty entity_time_property, ref VATAnimOffsetProperty animoffset_property)
+        {
+            animation_state.ManualTime += deltaTime * settings.Speed;
+            var framesSecond = settings.FrameCount / settings.FrameRate;
+            if (animation_state.ManualTime < 0)
+            {
+                animation_state.ManualTime += framesSecond;
+            }
+            entity_time_property.Value = animation_state.ManualTime % framesSecond;
+            animoffset_property.Value = settings.Offset;
+        }
+    }
