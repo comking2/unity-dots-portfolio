@@ -5,7 +5,6 @@ using Unity.Collections;
 public class FrameCounter : MonoBehaviour
 {
     // UI / FPS
-    float mDeltaTime;
     Rect mRect;
     GUIStyle mStyle;
 
@@ -60,8 +59,6 @@ public class FrameCounter : MonoBehaviour
     void Update()
     {
         if (!mInitialized) return;
-        // FPS 스무딩만 Update에서
-        mDeltaTime += (Time.unscaledDeltaTime - mDeltaTime) * 0.1f;
     }
 
     void LateUpdate()
@@ -80,7 +77,7 @@ public class FrameCounter : MonoBehaviour
     void OnGUI()
     {
         if (!mInitialized) return;
-        float fps = 1f / Mathf.Max(1e-6f, mDeltaTime);
+        float fps = 1f / Mathf.Max(1e-6f, Time.unscaledDeltaTime);
         GUI.Label(mRect,
             $"{fps:0.} FPS | Entities Runtime: {mRuntimeCount} | Entities TOTAL: {mTotalCount}",
             mStyle);

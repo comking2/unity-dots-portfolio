@@ -35,6 +35,7 @@
 - 엔티티 시간 델타를 적분해 인스턴스별 `VATAnimationState.ManualTime`을 증가시킵니다.
 - 머티리얼 프로퍼티(`_EntitiesTime`, `_AnimOffset`)를 갱신하고 `FrameCount / FrameRate`로 모듈러 연산해 루프를 보장합니다.
 - 음수 속도에서도 `ManualTime`을 루프 길이만큼 보정해 언더플로를 방지하고 자연스러운 역방향 재생을 지원합니다.
+- 메인 UI의 `Use Jobs`, `Use Burst` 토글로 런타임 중 병렬 처리 및 버스트 컴파일을 전환해 성능 차이를 확인할 수 있습니다.
 
 ## 셰이더 레이어 (`Assets/Shaders/VAT/EntitiesLit.shader`)
 - URP 전방 조명 셰이더 `Hidden/VAT/EntitiesLit_Array`가 베이크된 텍스처 배열을 소비합니다.
@@ -48,3 +49,10 @@
 3. **컴포넌트 브리지**: 머티리얼 프로퍼티 컴포넌트가 VAT 파라미터를 DOTS 인스턴싱 버퍼에 기록합니다.
 4. **시스템 업데이트**: `VATAnimationSystem`이 시간을 진행시키고 반복 시간이 `_EntitiesTime`에 반영됩니다.
 5. **셰이더 샘플링**: `Hidden/VAT/EntitiesLit_Array` 셰이더가 VAT 텍스처를 샘플링해 GPU에서 애니메이션 정점을 재구성, CPU 스키닝 없이 인스턴싱을 완성합니다.
+
+## 샘플 이미지
+![VAT GPU Instancing Sample](image_sample.png)
+
+## 빌드 다운로드
+실행 가능한 빌드 파일을 다운로드하여 VAT GPU 인스턴싱 시스템을 직접 체험해보세요:
+[빌드 다운로드](https://drive.google.com/file/d/1VaQNWzTBfeRvlo2UHFJGe3j1S8GtC5UI/view?usp=sharing)

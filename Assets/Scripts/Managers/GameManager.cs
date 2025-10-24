@@ -1,3 +1,4 @@
+using Unity.Burst;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -6,17 +7,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (mEnemy != null)
-        {
-            for (int i = 0; i < 100000; i++)
-            {
-                Instantiate(mEnemy);
-            }
-            // for (int i = 0; i < 10000; i++)
-            // {
-            //     GameObject.CreatePrimitive(PrimitiveType.Cube);
-            // }
-        }
+        
     }
 
     // Update is called once per frame
@@ -25,9 +16,26 @@ public class GameManager : MonoBehaviour
 
     }
 
-    //우측상단에 프레임 표시
     void OnGUI()
     {
-        GUI.Label(new Rect(10, 10, 100, 20), "FPS: " + (1.0f / Time.deltaTime).ToString("F2"));
+        GUILayout.BeginArea(new Rect(10f, 100f, 220f, 140f), GUI.skin.box);
+        
+        bool useJobs = VATRuntimeSettings.UseJobs;
+        bool toggleJobs = GUILayout.Toggle(useJobs, "Use Jobs");
+        if (toggleJobs != useJobs)
+        {
+            VATRuntimeSettings.UseJobs = toggleJobs;
+        }
+
+        bool burstEnabled = BurstCompiler.Options.EnableBurstCompilation;
+        bool forcedBurst = VATRuntimeSettings.UseBurst;
+        bool toggleBurst = GUILayout.Toggle(forcedBurst, "Use Burst");
+        if (toggleBurst != forcedBurst)
+        {
+            VATRuntimeSettings.UseBurst = toggleBurst;
+            BurstCompiler.Options.EnableBurstCompilation = toggleBurst;
+        }
+
+        GUILayout.EndArea();
     }
 }

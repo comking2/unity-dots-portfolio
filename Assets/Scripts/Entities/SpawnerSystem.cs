@@ -1,9 +1,10 @@
-using Unity.Entities;
-using Unity.Transforms;
 using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
+using Unity.Collections.LowLevel.Unsafe;
 
-[BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 public partial struct SpawnerSystem : ISystem
 {
@@ -29,68 +30,162 @@ public partial struct SpawnerSystem : ISystem
 
     public void OnDestroy(ref SystemState state) { }
 
-    [BurstCompile]
     private void OnUpdate(ref SystemState state)
     {
-        var time = SystemAPI.Time.ElapsedTime - mTimeStart;
-        EntityCommandBuffer ecb = default;
-        bool needECB = false;
-        foreach (var (spawner, tf) in SystemAPI.Query<RefRW<Spawner>, RefRO<LocalTransform>>())
+        float currentTime = (float)(SystemAPI.Time.ElapsedTime - mTimeStart);
+        var prefabLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
+
+        if (!VATRuntimeSettings.UseJobs)
         {
-            if(!spawner.ValueRO.EnableSpawn)
-                continue;
-            if (spawner.ValueRO.NextSpawnTime > time)
-                continue;
-            if (needECB == false)
+            var ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
+            var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+
+            var random = m_Random;
+            var spawnIndex = mSpawnIndex;
+            var maskValue = mMaskValue;
+
+            foreach (var (spawner, tf) in SystemAPI.Query<RefRW<Spawner>, RefRO<LocalTransform>>())
             {
-                var ecbSingleton = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>();
-                ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
-                needECB = true;
+                var prefabTransform = prefabLookup[spawner.ValueRO.Prefab];
+
+                if (ProcessSpawn(ref spawner.ValueRW, tf.ValueRO, currentTime, ref random, ref spawnIndex, ref maskValue,
+                        mRandomPosition, prefabTransform, out var spawnTransform, out var moveData))
+                {
+                    var newEntity = ecb.Instantiate(spawner.ValueRO.Prefab);
+                    ecb.SetComponent(newEntity, moveData);
+                    ecb.SetComponent(newEntity, spawnTransform);
+                }
             }
 
-            var newEntity = ecb.Instantiate(spawner.ValueRO.Prefab);
-
-            float3 pos = tf.ValueRO.Position;
-            switch (spawner.ValueRO.SpawnType)
-            {
-                case SpawnType.ENEMY: pos += NextPos(); break;
-                case SpawnType.FIRE:  pos += new float3(0, 1.0f, 0.5f); break;//TODO: fire prefab 위치 강제 보정 - 테이블 값 적용할 수 있도록 수정해야함
-            }
-            
-            ecb.SetComponent(newEntity, new MoveableData
-            {
-                Direction = spawner.ValueRO.Direction,
-                mSpeed = spawner.ValueRO.Speed
-            });
-            
-            var prefabLT = SystemAPI.GetComponentLookup<LocalTransform>(isReadOnly: true);
-            var p = prefabLT[spawner.ValueRO.Prefab];
-            ecb.SetComponent(newEntity, LocalTransform.FromPositionRotationScale(pos, p.Rotation, p.Scale));
-
-            // 주기 드리프트 없이
-            spawner.ValueRW.NextSpawnTime += spawner.ValueRO.SpawnRate;
+            m_Random = random;
+            mSpawnIndex = spawnIndex;
+            mMaskValue = maskValue;
+            return;
         }
+
+        prefabLookup.Update(ref state);
+        var jobRandom = new NativeReference<Random>(Allocator.TempJob);
+        jobRandom.Value = m_Random;
+        var jobIndex = new NativeReference<int>(Allocator.TempJob);
+        jobIndex.Value = mSpawnIndex;
+        var jobMask = new NativeReference<int>(Allocator.TempJob);
+        jobMask.Value = mMaskValue;
+
+        var ecbWriter = SystemAPI.GetSingleton<EndFixedStepSimulationEntityCommandBufferSystem.Singleton>()
+            .CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
+
+        var job = new SpawnJob
+        {
+            CurrentTime = currentTime,
+            RandomPosition = mRandomPosition,
+            PrefabLookup = prefabLookup,
+            ECB = ecbWriter,
+            RandomRef = jobRandom,
+            SpawnIndexRef = jobIndex,
+            MaskRef = jobMask
+        };
+
+        var handle = job.Schedule(state.Dependency);
+        handle.Complete();
+        state.Dependency = default;
+
+        m_Random = jobRandom.Value;
+        mSpawnIndex = jobIndex.Value;
+        mMaskValue = jobMask.Value;
+
+        jobRandom.Dispose();
+        jobIndex.Dispose();
+        jobMask.Dispose();
     }
 
-    private float3 NextPos()
-    {   //randomposition 은 31을 넘으면 안됨
-        //Assert.IsTrue(mRandomPosition > 31);
-        int linecount = mSpawnIndex % mRandomPosition;
-        if (linecount == 0)
+    internal static bool ProcessSpawn(ref Spawner spawner, in LocalTransform transform, float currentTime,
+        ref Random random, ref int spawnIndex, ref int maskValue, int randomPosition, in LocalTransform prefabTransform,
+        out LocalTransform spawnTransform, out MoveableData moveData)
+    {
+        spawnTransform = default;
+        moveData = default;
+
+        if (!spawner.EnableSpawn || spawner.NextSpawnTime > currentTime)
         {
-            mMaskValue = (1 << mRandomPosition) - 1;
+            return false;
         }
-        var random_value = m_Random.NextInt(0, mRandomPosition - linecount);
-        if ((mMaskValue & (1 << random_value)) == 0)
+
+        randomPosition = math.max(1, randomPosition);
+        float3 position = transform.Position;
+        switch (spawner.SpawnType)
         {
-            random_value++;
-            while ((mMaskValue & (1 << random_value)) == 0)
+            case SpawnType.ENEMY:
+                position += NextSpawnOffset(ref random, ref spawnIndex, ref maskValue, randomPosition);
+                break;
+            case SpawnType.FIRE:
+                position += new float3(0f, 1f, 0.5f);
+                break;
+        }
+
+        moveData = new MoveableData
+        {
+            Direction = spawner.Direction,
+            mSpeed = spawner.Speed
+        };
+
+        spawnTransform = LocalTransform.FromPositionRotationScale(position, prefabTransform.Rotation, prefabTransform.Scale);
+        spawner.NextSpawnTime += spawner.SpawnRate;
+        return true;
+    }
+
+    internal static float3 NextSpawnOffset(ref Random random, ref int spawnIndex, ref int maskValue, int randomPosition)
+    {
+        int lineCount = spawnIndex % randomPosition;
+        if (lineCount == 0)
+        {
+            maskValue = (1 << randomPosition) - 1;
+        }
+
+        int randomValue = random.NextInt(0, math.max(1, randomPosition - lineCount));
+        if ((maskValue & (1 << randomValue)) == 0)
+        {
+            randomValue++;
+            while (randomValue < randomPosition && (maskValue & (1 << randomValue)) == 0)
             {
-                random_value++;
+                randomValue++;
             }
         }
-        mMaskValue &= ~(1 << random_value);
-        mSpawnIndex++;
-        return new float3((float)random_value, 0, 0);
+
+        maskValue &= ~(1 << (randomValue % math.max(1, randomPosition)));
+        spawnIndex++;
+        return new float3(randomValue, 0f, 0f);
+    }
+
+    [BurstCompile]
+    internal partial struct SpawnJob : IJobEntity
+    {
+        public float CurrentTime;
+        public int RandomPosition;
+        [ReadOnly] public ComponentLookup<LocalTransform> PrefabLookup;
+        public EntityCommandBuffer.ParallelWriter ECB;
+        [NativeDisableParallelForRestriction] public NativeReference<Random> RandomRef;
+        [NativeDisableParallelForRestriction] public NativeReference<int> SpawnIndexRef;
+        [NativeDisableParallelForRestriction] public NativeReference<int> MaskRef;
+
+        void Execute([EntityIndexInQuery] int sortKey, RefRW<Spawner> spawner, in LocalTransform transform)
+        {
+            var random = RandomRef.Value;
+            var spawnIndex = SpawnIndexRef.Value;
+            var maskValue = MaskRef.Value;
+
+            var prefabTransform = PrefabLookup[spawner.ValueRO.Prefab];
+
+            if (ProcessSpawn(ref spawner.ValueRW, transform, CurrentTime, ref random, ref spawnIndex, ref maskValue,
+                    RandomPosition, prefabTransform, out var spawnTransform, out var moveData))
+            {
+                var newEntity = ECB.Instantiate(sortKey, spawner.ValueRO.Prefab);
+                ECB.SetComponent(sortKey, newEntity, moveData);
+                ECB.SetComponent(sortKey, newEntity, spawnTransform);
+            }
+
+            RandomRef.Value = random;
+            SpawnIndexRef.Value = spawnIndex;
+            MaskRef.Value = maskValue;
+        }
     }
 }

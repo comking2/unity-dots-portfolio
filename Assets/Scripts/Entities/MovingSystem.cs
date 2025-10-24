@@ -3,7 +3,6 @@ using Unity.Transforms;
 using Unity.Burst;
 using Unity.Collections;
 
-[BurstCompile]
 [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
 [UpdateAfter(typeof(SpawnerSystem))]
 public partial struct ObjectMoveSystem : ISystem
@@ -17,28 +16,44 @@ public partial struct ObjectMoveSystem : ISystem
     {
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        float deltaTime = SystemAPI.Time.fixedDeltaTime;
+
+        if (!VATRuntimeSettings.UseJobs)
+        {
+            foreach (var (moveableData, transform) in SystemAPI
+                         .Query<MoveableData, RefRW<LocalTransform>>())
+            {
+                IntegrateMovement(moveableData, ref transform.ValueRW, deltaTime);
+            }
+
+            return;
+        }
+
         var moveJob = new MoveJob
         {
-            deltaTime = SystemAPI.Time.fixedDeltaTime,
-            //RadiusLookup = radiusLookup
+            deltaTime = deltaTime,
         };
         var handle = moveJob.ScheduleParallel(state.Dependency);
         state.Dependency = handle;
     }
     
     [BurstCompile]
-    public partial struct MoveJob : IJobEntity
+    internal partial struct MoveJob : IJobEntity
     {
         public float deltaTime;
 
         // WithAll<EnemyTag> 필터는 쿼리에서 이미 적용됨
-        void Execute(Entity e,in MoveableData moveable_data, ref LocalTransform tf)
+        void Execute(in MoveableData moveableData, ref LocalTransform transform)
         {
-            tf.Position+= moveable_data.Direction * moveable_data.mSpeed * deltaTime;
+            IntegrateMovement(moveableData, ref transform, deltaTime);
         }
+    }
+
+    internal static void IntegrateMovement(in MoveableData moveableData, ref LocalTransform transform, float deltaTime)
+    {
+        transform.Position += moveableData.Direction * moveableData.mSpeed * deltaTime;
     }
 
 }
