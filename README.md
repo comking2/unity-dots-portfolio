@@ -10,7 +10,7 @@ Unity Entity Component System (ECS)를 **학습하고 실험**하기 위한 다�
 
 ## 기술 스택
 
-- **Unity 6000.0.27f1**
+- **Unity 6000.2.6f2**
 - **Unity DOTS (ECS) 1.3.14**
 - **Unity Input System 1.14.0**
 - **Universal Render Pipeline (URP) 17.1.0**
