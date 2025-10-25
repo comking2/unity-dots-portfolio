@@ -30,6 +30,7 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         HandleMouseInput();
+        HandleKeyboardInput();
     }
     
     private void HandleMouseInput()
@@ -50,6 +51,39 @@ public class InputManager : MonoBehaviour
         {
             isHolding = false;
             deltaX = 0;
+        }
+    }
+    
+    private void HandleKeyboardInput()
+    {
+        // F5: 현재 씬 재로드
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            SceneManager sceneManager = FindObjectOfType<SceneManager>();
+            if (sceneManager != null)
+            {
+                sceneManager.ReloadCurrentScene();
+            }
+        }
+        
+        // F6: 다음 씬
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            SceneManager sceneManager = FindObjectOfType<SceneManager>();
+            if (sceneManager != null)
+            {
+                sceneManager.LoadNextScene();
+            }
+        }
+        
+        // F4: 이전 씬
+        if (Input.GetKeyDown(KeyCode.F4))
+        {
+            SceneManager sceneManager = FindObjectOfType<SceneManager>();
+            if (sceneManager != null)
+            {
+                sceneManager.LoadPreviousScene();
+            }
         }
     }
 }

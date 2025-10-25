@@ -34,9 +34,10 @@ public class PlayerController : MonoBehaviour
     
     private void HandleInput()
     {
-        if (InputManager.Instance == null) return;
+        InputManager inputManager = FindObjectOfType<InputManager>();
+        if (inputManager == null) return;
         
-        float x = InputManager.Instance.DeltaX;
+        float x = inputManager.DeltaX;
         bool isStop = Mathf.Epsilon > Mathf.Abs(x);
         moveDirection = isStop ? Vector3.zero : new Vector3(x, 0, 0).normalized;
     }

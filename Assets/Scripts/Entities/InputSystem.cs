@@ -15,7 +15,11 @@ public partial class InputSystem : SystemBase
     
     protected override void OnCreate()
     {
-        EntityManager.CreateEntity(typeof(SimpleDragInput));
+        // SimpleDragInput Entity가 없으면 생성
+        if (!SystemAPI.HasSingleton<SimpleDragInput>())
+        {
+            EntityManager.CreateEntity(typeof(SimpleDragInput));
+        }
         mouse = Mouse.current;
     }
     
@@ -25,6 +29,12 @@ public partial class InputSystem : SystemBase
         {
             mouse = Mouse.current;
             if (mouse == null) return;
+        }
+        
+        // SimpleDragInput Entity가 없으면 생성
+        if (!SystemAPI.HasSingleton<SimpleDragInput>())
+        {
+            EntityManager.CreateEntity(typeof(SimpleDragInput));
         }
         
         var input = SystemAPI.GetSingletonRW<SimpleDragInput>();

@@ -22,7 +22,8 @@ public class ObjectSpawner : MonoBehaviour
     private int spawnIndex = 0;
     private int maskValue = 0;
     private float timeStart;
-    
+
+    static public Transform spawnParent;
     void Start()
     {
         timeStart = Time.time;
@@ -63,9 +64,15 @@ public class ObjectSpawner : MonoBehaviour
     private void SpawnObject()
     {
         if (prefab == null) return;
-        
+        if(spawnParent == null)
+        {
+            spawnParent = new GameObject($"{spawnType}_Spawner").transform;
+        }
         Vector3 spawnPosition = CalculateSpawnPosition();
-        GameObject spawnedObject = Instantiate(prefab, spawnPosition, prefab.transform.rotation);
+        GameObject spawnedObject = Instantiate(prefab, spawnPosition, prefab.transform.rotation, spawnParent);
+        
+        // 스폰 타입에 따른 컴포넌트 추가
+        SetupSpawnedObject(spawnedObject);
         
         // MovableObject 컴포넌트가 있으면 이동 설정
         MovableObject movableObject = spawnedObject.GetComponent<MovableObject>();
@@ -79,6 +86,28 @@ public class ObjectSpawner : MonoBehaviour
         if (playerController != null)
         {
             playerController.moveSpeed = speed;
+        }
+    }
+    
+    private void SetupSpawnedObject(GameObject spawnedObject)
+    {
+        switch (spawnType)
+        {
+            case SpawnType.ENEMY:
+                // Enemy 컴포넌트가 없으면 추가
+                if (spawnedObject.GetComponent<EnemyUnit>() == null)
+                {
+                    spawnedObject.AddComponent<EnemyUnit>();
+                }
+                break;
+                
+            case SpawnType.FIRE:
+                // FireProjectile 컴포넌트가 없으면 추가
+                if (spawnedObject.GetComponent<FireProjectile>() == null)
+                {
+                    spawnedObject.AddComponent<FireProjectile>();
+                }
+                break;
         }
     }
     
