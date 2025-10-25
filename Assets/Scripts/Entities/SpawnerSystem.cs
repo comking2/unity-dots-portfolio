@@ -54,6 +54,12 @@ public partial struct SpawnerSystem : ISystem
                     var newEntity = ecb.Instantiate(spawner.ValueRO.Prefab);
                     ecb.SetComponent(newEntity, moveData);
                     ecb.SetComponent(newEntity, spawnTransform);
+                    
+                    // FIRE 타입이면 수명 컴포넌트 추가
+                    if (spawner.ValueRO.SpawnType == SpawnType.FIRE)
+                    {
+                        ecb.AddComponent(newEntity, new BulletLifetime { Value = 10f }); // 10초 수명
+                    }
                 }
             }
 
@@ -181,6 +187,12 @@ public partial struct SpawnerSystem : ISystem
                 var newEntity = ECB.Instantiate(sortKey, spawner.ValueRO.Prefab);
                 ECB.SetComponent(sortKey, newEntity, moveData);
                 ECB.SetComponent(sortKey, newEntity, spawnTransform);
+                
+                // FIRE 타입이면 수명 컴포넌트 추가
+                if (spawner.ValueRO.SpawnType == SpawnType.FIRE)
+                {
+                    ECB.AddComponent(sortKey, newEntity, new BulletLifetime { Value = 10f }); // 10초 수명
+                }
             }
 
             RandomRef.Value = random;

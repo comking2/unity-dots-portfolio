@@ -11,6 +11,7 @@ public struct Radius : IComponentData { public float Value; } // 충돌 반지�
 public struct Health : IComponentData { public int Value; }
 public struct DamageInfo : IComponentData { public int Value; }
 public struct HitInfo : IComponentData { public int Damage; } // 피격 표시(후처리용)
+public struct BulletLifetime : IComponentData { public float Value; } // 탄환 수명
 
 public struct EnemySnap { public Entity E; public float3 Pos; public float Radius; }
 
