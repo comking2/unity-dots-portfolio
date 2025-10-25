@@ -246,6 +246,107 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &759120477
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 759120479}
+  - component: {fileID: 759120478}
+  - component: {fileID: 759120481}
+  - component: {fileID: 759120480}
+  - component: {fileID: 759120482}
+  m_Layer: 0
+  m_Name: SceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &759120478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759120477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441a75e84b9d31a4f862e34d4b169c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneManager
+  sceneNames:
+  - SampleGameObjectScene
+  - ECStutorialScene
+  showLoadingScreen: 1
+  minLoadingTime: 1
+  loadingText: Loading...
+  asyncLoading: 1
+  enablePerformanceTracking: 1
+--- !u!4 &759120479
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759120477}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.79643, y: -1, z: 3.57947}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &759120480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759120477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 273fdbe29e02be1408e1d47acc85e7a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputManager
+  inputSensitivity: 0.01
+--- !u!114 &759120481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759120477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb529ab0bf9eb1d44a658af23c94dfb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleFrameCounter
+  showFPS: 1
+  updateInterval: 0.5
+  fontSize: 20
+  textColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  screenPosition: {x: 10, y: 10}
+  alignment: 0
+--- !u!114 &759120482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759120477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bdacae9f15648f4b9ee62f58ac48eca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PerformanceTracker
+  sampleInterval: 1
+  enableTracking: 1
+  outputFileName: performance_report
 --- !u!1 &768828260
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,9 +493,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 824685657}
-  - component: {fileID: 824685656}
   - component: {fileID: 824685658}
-  - component: {fileID: 824685659}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -402,24 +501,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &824685656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 824685655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb529ab0bf9eb1d44a658af23c94dfb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleFrameCounter
-  showFPS: 1
-  updateInterval: 0.5
-  fontSize: 20
-  textColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  screenPosition: {x: 10, y: 10}
-  alignment: 0
 --- !u!4 &824685657
 Transform:
   m_ObjectHideFlags: 0
@@ -459,19 +540,6 @@ MonoBehaviour:
   - RenderObject
   - Player
   - Enemy
---- !u!114 &824685659
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 824685655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 273fdbe29e02be1408e1d47acc85e7a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  inputSensitivity: 0.01
 --- !u!1001 &961389578
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -691,11 +759,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectSpawner
   prefab: {fileID: 8148915161550005895, guid: 7189c6d1facae8c4c85f7c3eca849502, type: 3}
-  spawnRate: 0.1
+  spawnRate: 0.01
   spawnType: 0
   enableSpawn: 1
   direction: {x: 0, y: 0, z: -1}
-  speed: 5
+  speed: 2
   randomPosition: 10
 --- !u!1 &2886701487900339238
 GameObject:
@@ -743,7 +811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d6ba1289f5da840ac9062b68bee588, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 1
+  moveSpeed: 3
   idleAnimation: {fileID: 0}
   moveAnimation: {fileID: 0}
   animationSpeed: 1
@@ -776,3 +844,4 @@ SceneRoots:
   - {fileID: 8565820197781314776}
   - {fileID: 2127935002}
   - {fileID: 824685657}
+  - {fileID: 759120479}

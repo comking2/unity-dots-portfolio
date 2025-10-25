@@ -82,8 +82,8 @@ public class GameObjectDebugger : MonoBehaviour
             // RenderObject 태그 수
             if (showRenderObjects)
             {
-                GameObject[] renderObjects = GameObject.FindGameObjectsWithTag("RenderObject");
-                renderObjectCount = renderObjects.Length;
+                renderObjectCount = ObjectSpawner.spawnParent != null ?
+                    ObjectSpawner.spawnParent.childCount : 0;
             }
             
             // 기타 태그들 카운트
